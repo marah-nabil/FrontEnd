@@ -9,8 +9,8 @@
   margin-top: 0px;
   padding: 20px;
   text-align: center;
-  background: #eef1f7;
-  color: #666;
+  background: #ffffff;
+  color: #100f0f;
   font-size: 14px;
 }
 </style>

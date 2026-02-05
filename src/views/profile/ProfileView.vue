@@ -1,22 +1,15 @@
 <template>
-  <AppHeader :beneficiary="beneficiary" />
    <div class="page-title">
         بيانات المستفيد
-      </div>
+    </div>
   <div class="page-container">
 
-    <div class="content">
+  <div class="content">
       <ProfileCard :beneficiary="beneficiary" />
       <FamilyTable :family="family" />
       <InstructionsCard />
       <PackageCard />
 
-      <EditProfileModal
-        v-if="showEditModal"
-        :beneficiary="beneficiary"
-        @close="showEditModal = false"
-        @save="updateData"
-      />
     </div>
   </div>
 </template>
@@ -29,7 +22,6 @@ import FamilyTable from '../../components/profile/FamilyTable.vue'
 import EditProfileModal from '../../components/profile/EditProfileModal.vue'
 import InstructionsCard from '../../components/profile/InstructionsCard.vue'
 import PackageCard from '../../components/profile/PackageCard.vue'
-import AppHeader from '../../components/profile/AppHeader.vue'
 
 import {
   Beneficiary,

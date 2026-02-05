@@ -3,6 +3,10 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '../views/auth/LoginView.vue'
 import Profile from '../views/profile/ProfileView.vue'
 import Verify from '../views/verify/VerifyPreviewView.vue'
+import EditProfile from '../views/profile/EditProfile.vue'
+import FamilyMembersView from '../views/profile/FamilyMembersView.vue'
+import AddFamilyMemberView from '../views/profile/AddFamilyMemberView.vue'
+import EditFamilyMemberView from '../views/profile/EditFamilyMemberView.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,10 +24,33 @@ const routes: RouteRecordRaw[] = [
     component: Login,
   },
   {
-    path: '/profile',
-    name: 'profile',
-    component: Profile,
-  },
+   path: '/profile',
+    component: () => import ('../layout/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'profile',
+        component: Profile,
+      },
+      {
+        path: 'edit',
+        name: 'profile-edit',
+        component: EditProfile,
+      },
+      {
+        path: 'family',
+        component: FamilyMembersView
+      },
+      {
+        path: 'family/add',
+        component: AddFamilyMemberView
+      },
+      {
+        path: 'family/edit/:id',
+        component: EditFamilyMemberView,
+      }
+    ],
+  }
 ]
 
 const router = createRouter({

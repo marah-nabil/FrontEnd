@@ -1,204 +1,230 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-card">
-      <!-- Header -->
-      <div class="modal-header">
-        <h3>تعديل بيانات المستفيد</h3>
-        <button class="close-btn" @click="$emit('close')">×</button>
-      </div>
+<div class="page-wrapper">
+  <div class="info-summary-card">
 
-      <!-- Body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <label>رقم الهاتف</label>
-          <input type="text" v-model="form.phone" />
+    <!-- كارد المعلومات الأساسية -->
+    <div class="info-grid">
+      <div class="info-block">
+          <p class="name">mohamed</p>
+          <p class="id">803873926</p>
+          <span class="badge">مسجل</span>
+      </div>
+        <div class="info-block center">
+          <div class="item">
+            <label>تاريخ التسجيل في الجمعية</label>
+            <p>08 سبتمبر 2024</p>
+         </div>
+
+          <div class="item">
+            <label>السكن</label>
+            <p>البريج</p>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>العنوان</label>
-          <input type="text" v-model="form.address" />
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button class="btn-cancel" @click="$emit('close')">إلغاء</button>
-        <button class="btn-save" @click="save">حفظ التعديلات</button>
       </div>
     </div>
-  </div>
+
+    <!-- كارد الفورم -->
+    <div class="form-card">
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label>رقم الموبايل *</label>
+          <input type="text" />
+        </div>
+
+        <div class="form-field">
+          <label>المحافظة *</label>
+          <input type="text" />
+        </div>
+
+        <div class="form-field">
+          <label>المنطقة *</label>
+          <input type="text" />
+        </div>
+
+        <div class="form-field">
+          <label>الحي *</label>
+          <input type="text" />
+        </div>
+
+        <div class="form-field">
+          <label>السكن *</label>
+          <input type="text" />
+        </div>
+
+        <div class="form-field">
+          <label>أقرب جمعية *</label>
+          <select>
+            <option>اختر أقرب جمعية</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="submit">طلب التعديل</button>
+        <button class="cancel">إلغاء</button>
+      </div>
+    </div>
+</div>
 </template>
-
-<script setup lang="ts">
-import { reactive } from 'vue'
-import type { Beneficiary } from '../../mock/beneficiary'
-
-const props = defineProps<{ beneficiary: Beneficiary }>()
-const emit = defineEmits(['close', 'save'])
-
-const form = reactive({
-  phone: props.beneficiary.phone,
-  address: props.beneficiary.address,
-})
-
-const save = () => {
-  emit('save', form)
-}
-</script>
-
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
+.page-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 140px 24px 60px;
+}
+
+.info-summary-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 32px;
+  transform: translateY(-60px);
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  direction: rtl;
+}
+.form-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  gap: 24px;
 }
-
-.modal-card {
-  background: #ffffff;
-  width: 720px;
-  border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  animation: fadeIn 0.25s ease;
-}
-
-/* Header */
-.modal-header {
-  background-color: #f3f6f9;
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-header h3 {
-  font-size: 16px;
-  color: #1f2937;
-  margin: 0;
-}
-
-.close-btn {
-  background-color: #f0fdf4;
-  color: #2f855a;
-  border: 1px solid #2f855a;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Body */
-.modal-body {
-  padding: 20px;
-}
-
-.form-group {
+.info-block {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  gap: 10px;
+}
+.info-block:first-child {
+  align-items: flex-start;
 }
 
-.form-group label {
+.info-block.center {
+  text-align: center;
+}
+.item p {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.info-block label {
   font-size: 13px;
-  margin-bottom: 6px;
-  color: #374151;
+  color: #6b7280;
+}
+.name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2563eb;
+}
+.id {
+  font-size: 14px;
+  color: #2563eb;
+  font-weight: 500;
 }
 
-.form-group input {
-  padding: 8px 10px;
-  border-radius: 6px;
+.badge {
+  margin-top: 8px;
+  align-self: flex-start;
+  background: #14b8a6;
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+/* 📱 موبايل */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+    text-align: right;
+  }
+
+  .info-block.center {
+    text-align: right;
+  }
+}
+/* كارد الفورم */
+.form-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 40px;
+  direction: rtl;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 24px;
+}
+/* FIELD */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.form-field label span {
+  color: #e11d48;
+}
+
+/* INPUTS */
+.form-field input,
+.form-field select {
+  height: 44px;
+  padding: 10px 14px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  transition: border-color .2s, box-shadow .2s;
 }
 
-.form-group input:focus {
+.form-field input:focus,
+.form-field select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,.15);
 }
 
-/* Footer */
-.modal-footer {
-  padding: 14px 18px;
+.form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #e5e7eb;
+  gap: 12px;
+  margin-top: 32px;
 }
 
-.btn-cancel {
-  background-color: #f0fdf4;
-  color: #2f855a;
-  border: 1px solid #2f855a;
-  padding: 10px 18px;
+.submit {
+  background: #4f7cff;
+  color: #fff;
+  padding: 10px 28px;
   border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.btn-save {
-  background-color: #2f855a;
-  color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
-.btn-save:hover {
-  background-color: #276749;
+.cancel {
+  background: #f3f4f6;
+  color: #111;
+  padding: 10px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+
 </style>
-<!--
-<template>
-  <div class="editmodal">
-    <div class="whiteview">
-      <h2></h2>
-
-      <input v-model="form.phone" placeholder="رقم الهاتف" />
-      <input v-model="form.phone" placeholder="العنوان" />
-
-      <div class="btns">
-        <button @click="$emit('close')" class="close">إلغاء</button>
-        <button @click="$emit('saved')" class="save">حفظ</button>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { reactive } from 'vue'
-import api from '../../services/api'
-
-const props = defineProps({ beneficiary: Object })
-const emit = defineEmits(['close', 'saved'])
-
-const form = reactive({
-  phone: props.beneficiary.phone,
-  address: props.beneficiary.address,
-})
-
-const save = async () => {
-  await api.put(`/beneficaries/${props.beneficiary.id}`, form)
-  emit('saved')
-}
-</script>
--->

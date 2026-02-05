@@ -100,33 +100,33 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
 .app-header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 64px;
-  background: white;
-  z-index: 1000;
-}
-
-/* الحالة العادية */
-.app-header:not(.scrolled) {
-  position: relative;
-  height: 35vh; /* ثلث الشاشة */
+  height: 70px;
   background: linear-gradient(135deg, #fdf912, #ff4704);
   color: white;
+  z-index: 1000;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* عند السكرول */
 .app-header.scrolled {
-  position: fixed;
-  top: 0;
-  height: 70px;
   background: white;
   color: #111;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  z-index: 1000;
 }
+
+/*
+.app-header:not(.scrolled) {
+  position: relative;
+  height: 30vh;
+  background: linear-gradient(135deg, #fdf912, #ff4704);
+  color: white;
+}
+*/
 
 .header-full {
   width: 100%;
@@ -251,12 +251,16 @@ onBeforeUnmount(() => {
 .mobile-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  height: 100%;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  justify-content: flex-end;
+}
+.mobile-menu {
+   width: 260px;
   background: #fff;
+  height: 100%;
   padding: 20px;
 }
-
 .mobile-menu .danger {
   color: #c0392b;
 }
