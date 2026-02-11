@@ -30,44 +30,211 @@
       <div class="form-grid">
         <div class="form-field">
           <label>رقم الموبايل *</label>
-          <input type="text" />
+          <input type="text" v-model="phone" />
         </div>
 
         <div class="form-field">
           <label>المحافظة *</label>
-          <input type="text" />
+          <select v-model="governorate">
+            <option value="">اختر المحافظة</option>
+            <option v-for="g in Object.keys(locations)" :key="g"> {{ g }}</option>
+          </select>
         </div>
 
         <div class="form-field">
           <label>المنطقة *</label>
-          <input type="text" />
+          <select v-model="area" :disabled="!governorate">
+            <option value="">اختر المنطقة</option>
+            <option v-for="a in areas" :key="a"> {{ a }}</option>
+          </select>
         </div>
 
         <div class="form-field">
           <label>الحي *</label>
-          <input type="text" />
+          <select v-model="neighborhood" :disabled="!area">
+            <option value="">اختر الحي</option>
+            <option v-for="n in neighborhoods" :key="n"> {{ n }}</option>
+          </select>
         </div>
 
         <div class="form-field">
           <label>السكن *</label>
-          <input type="text" />
+          <select v-model="housing" :disabled="!neighborhood">
+            <option  :disabled="!neighborhood">اختر السكن</option>
+            <option v-for="h in housings" :key="h"> {{ h }}</option>
+          </select>
         </div>
 
         <div class="form-field">
           <label>أقرب جمعية *</label>
-          <select>
-            <option>اختر أقرب جمعية</option>
+          <select v-model="association"  :disabled="!neighborhood">
+            <option value="">اختر أقرب جمعية</option>
+            <option v-for="a in associations" :key="a"> {{ a }}</option>
           </select>
         </div>
       </div>
 
       <div class="form-actions">
-        <button class="submit">طلب التعديل</button>
+        <button class="submit" :disabled="!isFormValid" @click="submitEditRequest">طلب التعديل</button>
         <button class="cancel">إلغاء</button>
       </div>
+      <p v-if="validationMessage" class="error">
+        {{ validationMessage }}
+      </p>
+
     </div>
 </div>
 </template>
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRequestsStore } from '../../stores/requests'
+
+const router = useRouter()
+const requestsStore = useRequestsStore()
+
+const validationMessage = computed(() => {
+  if (!phone.value) return 'رقم الموبايل مطلوب'
+  if (!governorate.value) return 'الرجاء اختيار المحافظة'
+  if (!area.value) return 'الرجاء اختيار المنطقة'
+  if (!neighborhood.value) return 'الرجاء اختيار الحي'
+  if (!housing.value) return 'الرجاء اختيار السكن'
+  if (!association.value) return 'الرجاء اختيار أقرب جمعية'
+  return ''
+})
+
+const locations = {
+  'شمال القطاع': {
+    'جباليا': {
+      'جباليا البلد': {
+        housings: ['بلوك 1', 'بلوك 2'],
+        associations: ['جمعية جباليا', 'جمعية الإحسان']
+      },
+      'مخيم جباليا': {
+        housings: ['بلوك A', 'بلوك B'],
+        associations: ['جمعية مخيم جباليا']
+      }
+    }
+  },
+
+  'الوسطى': {
+    'البريج': {
+      'مخيم البريج': {
+        housings: ['بلوك 1', 'بلوك 2'],
+        associations: ['جمعية البريج', 'جمعية الوسطى']
+      },
+      'حي السوق': {
+        housings: ['منطقة السوق'],
+        associations: ['جمعية دير البلح']
+      }
+    },
+    'النصيرات' : {
+      'مخيم النصيرات': {
+        housings: ['مخيم A', 'مخيم B'],
+        associations: ['جمعية النصيرات']
+      }
+    }, 'دير البلح' : {
+      'مخيم دير البلح': {
+        housings: ['مخيم A', 'مخيم B'],
+        associations: ['جمعية دير البلح']
+      }
+    },
+    'المغازي': {
+      'مخيم المغازي': {
+        housings: ['بلوك A', 'بلوك B'],
+        associations: ['جمعية المغازي']
+      }
+    }
+  },
+
+  'جنوب القطاع': {
+    'خانيونس': {
+      'وسط البلد': {
+        housings: ['حي 1', 'حي 2'],
+        associations: ['جمعية خانيونس']
+      }
+    }
+  }
+}
+
+const phone = ref('')
+const governorate = ref('')
+const area = ref('')
+const neighborhood = ref('')
+const housing = ref('')
+const association = ref('')
+
+const areas = computed(() => {
+  return governorate.value
+    ? Object.keys(locations[governorate.value])
+    : []
+})
+
+const neighborhoods = computed(() => {
+  return governorate.value && area.value
+    ? Object.keys(locations[governorate.value][area.value])
+    : []
+})
+
+const housings = computed(() => {
+  return governorate.value && area.value && neighborhood.value
+    ? locations[governorate.value][area.value][neighborhood.value].housings
+    : []
+})
+
+const associations = computed(() => {
+  return governorate.value && area.value && neighborhood.value
+    ? locations[governorate.value][area.value][neighborhood.value].associations
+    : []
+})
+
+watch(governorate, () => {
+  area.value = ''
+  neighborhood.value = ''
+  housing.value = ''
+  association.value = ''
+})
+
+watch(area, () => {
+  neighborhood.value = ''
+  housing.value = ''
+  association.value = ''
+})
+
+watch(neighborhood, () => {
+  housing.value = ''
+  association.value = ''
+})
+
+const isFormValid = computed(() => {
+  return (
+    phone.value.trim() !== '' &&
+    governorate.value !== '' &&
+    area.value !== '' &&
+    neighborhood.value !== '' &&
+    housing.value !== '' &&
+    association.value !== ''
+  )
+})
+
+const submitEditRequest = () => {
+  requestsStore.addRequest({
+    type: 'edit',
+    title: '',
+    payload: {
+      phone: phone.value,
+      governorate: governorate.value,
+      area: area.value,
+      neighborhood: neighborhood.value,
+      housing: housing.value,
+      association: association.value
+    }
+  })
+  router.push('/profile/requests')
+}
+</script>
+
+
 <style scoped>
 .page-wrapper {
   max-width: 1200px;
@@ -215,6 +382,10 @@
   font-size: 14px;
   cursor: pointer;
 }
+.submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
 
 .cancel {
   background: #f3f4f6;
@@ -226,5 +397,10 @@
   cursor: pointer;
 }
 
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 10px;
+}
 
 </style>

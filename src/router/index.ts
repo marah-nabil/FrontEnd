@@ -7,6 +7,7 @@ import EditProfile from '../views/profile/EditProfile.vue'
 import FamilyMembersView from '../views/profile/FamilyMembersView.vue'
 import AddFamilyMemberView from '../views/profile/AddFamilyMemberView.vue'
 import EditFamilyMemberView from '../views/profile/EditFamilyMemberView.vue'
+import MyRequestsView from '../views/profile/MyRequestsView.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -48,6 +49,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'family/edit/:id',
         component: EditFamilyMemberView,
+      },
+       {
+        path: 'requests',
+        name: 'my-requests',
+        component: MyRequestsView
       }
     ],
   }

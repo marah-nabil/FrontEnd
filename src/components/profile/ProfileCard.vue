@@ -26,12 +26,27 @@
     </div>
 
     <div class="card-footer">
-       <button class="edit-btn" @click="router.push('/profile/edit')">
-      تعديل البيانات
+       <button class="edit-btn" @click="router.push('/profile/edit')">تعــديل الـبيـانـات
     </button>
     </div>
   </div>
 </template>
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+defineProps<{
+  beneficiary?: {
+    fullName?: string
+    nationalId?: string
+    phone?: string
+    address?: string
+    status?: string
+  }
+}>()
+</script>
+
 
 <style scoped>
 .profile-card {

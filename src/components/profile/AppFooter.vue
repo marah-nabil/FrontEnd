@@ -6,6 +6,7 @@
 
 <style scoped>
 .app-footer {
+
   margin-top: 0px;
   padding: 20px;
   text-align: center;

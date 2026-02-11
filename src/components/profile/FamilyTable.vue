@@ -22,12 +22,16 @@
       </tbody>
     </table>
     <div class="card-footer">
-      <button class="edit-btn" @click="$emit('edit')">تعــديل الـبيـانـات</button>
+      <button class="edit-btn" @click="router.push('/profile/family')">تعــديل الـبيـانـات</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 defineProps<{
   family: {
     id: number

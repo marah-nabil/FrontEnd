@@ -5,8 +5,13 @@
       <div class="header-right">
         <img src="@/assets/Logo2.jpeg" class="logo" />
         <nav class="header-nav">
-          <a href="#">الرئيسية</a>
-          <a href="#">الطلبات</a>
+          <a @click="goProfile">الرئيسية</a>
+          <router-link
+            to="/profile/requests"
+            class="requests-btn"
+          >
+            الطلبات
+          </router-link>
         </nav>
       </div>
 
@@ -22,7 +27,7 @@
 
         <div v-if="open" class="dropdown">
           <a @click="goProfile">الملف الشخصي</a>
-          <a class="danger" @click="logout">تسجيل الخروج</a>
+          <a class="danger" @click.stop="openLogoutConfirm">تسجيل الخروج</a>
         </div>
       </div>
 
@@ -37,9 +42,38 @@
         <a href="#">الرئيسية</a>
         <a href="#">الطلبات</a>
         <a @click="goProfile">الملف الشخصي</a>
-        <a class="danger" @click="logout">تسجيل الخروج</a>
+        <a class="danger" @click.stop="openLogoutConfirm">تسجيل الخروج</a>
+        <!-- Logout Confirm -->
+         <!--  <div v-if="showLogoutConfirm" class="logout-overlay">
+            <div class="logout-modal">
+              <h3>تنبيه</h3>
+              <p>
+                أنت على وشك تسجيل الخروج، هل ترغب في تأكيد العملية؟
+              </p>
+
+              <div class="actions">
+                <button class="btn-cancel" @click="showLogoutConfirm = false">
+                  إلغاء
+                </button>
+
+                <button class="btn-logout" @click="confirmLogout">
+                  تسجيل الخروج
+                </button>
+              </div>
+          </div>
+        </div> -->
+
       </div>
     </div>
+    <ConfirmDaialog
+      v-if="showLogoutConfirm"
+      title="تنبيه"
+      message="أنت على وشك تسجيل الخروج، هل ترغب في تأكيد العملية؟"
+      confirmText="تسجيل الخروج"
+      @close="showLogoutConfirm = false"
+      @confirm="confirmLogout"
+    />
+
   </header>
 
 
@@ -49,6 +83,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import ConfirmDaialog from '../../components/profile/ConfirmDaialog.vue'
 
 defineProps<{
   beneficiary: {
@@ -62,6 +97,8 @@ const onScroll = () => {
   isScrolled.value = window.scrollY > 120
 }
 const router = useRouter()
+
+const showLogoutConfirm = ref(false)
 
 const open = ref(false)
 const mobileOpen = ref(false)
@@ -83,11 +120,20 @@ const goProfile = () => {
   router.push('/profile')
 }
 
-const logout = () => {
-  localStorage.clear()
-  router.push('/login')
+const openLogoutConfirm = () => {
+  showLogoutConfirm.value = true
+  open.value = false
+  mobileOpen.value = false
 }
 
+const confirmLogout = () =>{
+  // localStorage.removeItem('token')
+  // localStorage.removeItem('user')
+
+  showLogoutConfirm.value = false
+
+  router.push('/verify')
+}
 onMounted(() => {
   window.addEventListener('scroll', onScroll)
   document.addEventListener('click', closeDropdown)
@@ -213,6 +259,60 @@ onBeforeUnmount(() => {
 .dropdown .danger {
   color: #c0392b;
 }
+
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.logout-modal {
+  width: 360px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,.2);
+}
+
+.logout-modal h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.logout-modal p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.logout-modal .actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-cancel {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btn-logout {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
 .logo {
   height: 48px;
 }

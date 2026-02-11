@@ -30,28 +30,28 @@
         :mode="mode"
         :member="selectedMember"
         @close="showForm = false"
-        @save="addMember"
+        @save="/*addMemberhandleSave*/sendAddRequest"
       />
 
     <ConfirmDialog
       v-if="showDeleteConfirm"
       :name="memberToDelete?.firstName + ' ' + memberToDelete?.familyName"
-      @close="showDeleteConfirm = false"
+      message="هل أنت متأكد من إرسال طلب حذف هذا الفرد؟"
       @confirm="sendDeleteRequest"
+      @close="showDeleteConfirm = false"
     />
 
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRequestsStore } from '../../stores/requests'
 
 import FamilyTableCard from '../../components/profile/FamilyTableCard.vue'
 import FamilyMemberForm from '../../components/profile/FamilyMemberForm.vue'
 import ConfirmDialog from '../../components/profile/ConfirmDialog.vue'
 
-//const router = useRouter()
-
+/* ================= TYPES ================= */
 type FamilyMember = {
   id?: number
   relation: string
@@ -65,122 +65,113 @@ type FamilyMember = {
   hasDisability: boolean
   notes?: string
 }
-const showForm = ref(false)
-const mode = ref<'add' | 'edit'>('add')
-const selectedMember = ref<FamilyMember | null>(null)
 
-const openAddForm= () =>{
-  mode.value= 'add'
-  selectedMember.value = null
-  showForm.value = true
+type RequestItem = {
+  id: number
+  type: 'add' | 'edit' | 'delete'
+  title: string
+  date: string
+  status: 'pending'
+  payload: FamilyMember
 }
-const members = ref([
+
+/* ================= STATE ================= */
+const members = ref<FamilyMember[]>([
   {
     id: 1,
     relation: 'ابن',
     firstName: 'محمد',
-    fatherName: 'انس',
+    fatherName: 'أنس',
     grandFatherName: 'نبيل',
     familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
+    birthDate: '2022-04-24',
     idNumber: '442815338',
-  },
-  {
-    id: 2,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'انس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
-    idNumber: '442815338',
-  },
-  {
-    id: 3,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'انس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
-    idNumber: '442815338',
-    status: 'registered',
-  },
-  {
-    id: 4,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'انس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
-    idNumber: '442815338',
-    status: 'registered',
-  },
-  {
-    id: 5,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'انس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
-    idNumber: '442815338',
-    status: 'registered',
-  },
-  {
-    id: 6,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'انس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '24 أبريل 2022',
-    idNumber: '442815338',
-    status: 'registered',
+    gender: 'ذكر',
+    hasDisability: false
   }
 ])
-const goEdit = (id: number) => {
-  selectedMember.value = members.value.find(m => m.id === id) || null
-  mode.value = 'edit'
-  showForm.value = true
- // router.push(`/profile/family/edit/${id}`)
-}
-const addMember = (data: FamilyMember) => {
-  if (mode.value === 'add') {
-    members.value.push({ ...data, id: Date.now() })
-  } else {
-    const index = members.value.findIndex(m => m.id === data.id)
-    if (index !== -1)
-      members.value[index] = data
-  }
-  showForm.value = false
-}
+
+const requestsStore = useRequestsStore()
+
+const requests = ref<RequestItem[]>([])
+
+const showForm = ref(false)
+const mode = ref<'add' | 'edit'>('add')
+const selectedMember = ref<FamilyMember | null>(null)
 
 const showDeleteConfirm = ref(false)
 const memberToDelete = ref<FamilyMember | null>(null)
 
-const requestDelete = (id: number) => {
-  memberToDelete.value = members.value.find(m => m.id === id) || null
+/* ================= ACTIONS ================= */
+const openAddForm = () => {
+  mode.value = 'add'
+  selectedMember.value = null
+  showForm.value = true
+}
+
+const goEdit = (id: number) => {
+  selectedMember.value = members.value.find(m => m.id === id) || null
+  mode.value = 'edit'
+  showForm.value = true
+}
+
+const handleSave = (data: FamilyMember) => {
+  if (mode.value === 'add') {
+    sendAddRequest(data)
+  } else {
+    sendEditRequest(data)
+  }
+}
+
+const sendAddRequest = (data: FamilyMember) => {
+  requestsStore.addRequest('add' , data)
+  /* requests.value.push({
+    id: Date.now(),
+    type: 'add',
+    title: 'طلب إضافة فرد',
+    date: new Date().toISOString().split('T')[0],
+    status: 'pending',
+    payload: data
+  }) */
+  showForm.value = false
+}
+
+const sendEditRequest = (data: FamilyMember) => {
+ requestsStore.addRequest('edit' , data)
+ /*  requests.value.push({
+    id: Date.now(),
+    type: 'edit',
+    title: 'طلب تعديل بيانات فرد',
+    date: new Date().toISOString().split('T')[0],
+    status: 'pending',
+    payload: data
+  }) */
+  showForm.value = false
+}
+
+const requestDelete = (member: FamilyMember) => {
+  memberToDelete.value = member
   showDeleteConfirm.value = true
 }
 
 const sendDeleteRequest = () => {
   if (!memberToDelete.value) return
+  requestsStore.addRequest('delete', memberToDelete.value)
 
-  const index = members.value.findIndex(
-    m => m.id === memberToDelete.value?.id
-  )
-
-  if (index !== -1) {
-    members.value[index].status = 'delete_requested'
-  }
-
+ /*  requests.value.push({
+    id: Date.now(),
+    type: 'delete',
+    title: 'طلب حذف فرد',
+    date: new Date().toISOString().split('T')[0],
+    status: 'pending',
+    payload: memberToDelete.value
+  })
+ */
   showDeleteConfirm.value = false
   memberToDelete.value = null
 }
-
 </script>
+
 
 
 <style scoped>

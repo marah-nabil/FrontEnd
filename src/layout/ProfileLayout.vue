@@ -22,10 +22,13 @@ const beneficiary = {
 <style scoped>
 .profile-layout {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-content {
   padding-top: 70px;
   min-height: calc(100vh - 140px);
+  flex: 1;
 }
 </style>
