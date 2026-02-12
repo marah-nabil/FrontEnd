@@ -8,30 +8,51 @@
 
     <div class="actions">
       <button class="btn-outline" @click="$emit('prev')">السابق</button>
-      <button class="btn-primary" :disabled="!isValid" @click="$emit('next')">التالي</button>
+      <button class="btn-primary" :disabled="loading" @click="submit">{{ loading ? 'جاري التحقق...' : 'التالي' }}</button>
+      <p v-if="error" style="color:red; margin-top:10px">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import api from '../../services/api'
+import { ref } from 'vue'
 
 const emit = defineEmits(['next', 'prev', 'valid'])
 
 const nationalId = ref('')
 const birthDate = ref('')
-const isValid = ref(false)
+const loading = ref(false)
+const error = ref('')
 
-// تحقق بسيط
-const validate = () => {
-  return nationalId.value.length === 9 && birthDate.value !== ''
+const submit = async () => {
+  if (!nationalId.value || !birthDate.value) {
+    error.value = 'الرجاء ملء جميع الحقول'
+    emit('valid', false)
+    return
+  }
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    const response = await api.post('/beneficiaries/verify-basic', {
+      nationalId: nationalId.value,
+      birthDate: new Date(birthDate.value).toISOString()
+    })
+
+   localStorage.setItem('beneficiaryId', response.data.id)
+    emit('valid', true)
+    emit('next')
+  } catch (err: any) {
+    error.value =
+      err.response?.data?.error ||
+      err.response?.data ||
+       'حدث خطأ أثناء الاتصال بالخادم'
+  } finally {
+    loading.value = false
+  }
 }
-
-// نراقب أي تغيير
-watch([nationalId, birthDate], () => {
-  isValid.value = validate()
-  emit('valid', validate())
-})
 </script>
 
 <style scoped>

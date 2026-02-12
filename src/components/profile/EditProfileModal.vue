@@ -1,13 +1,15 @@
 <template>
 <div class="page-wrapper">
-  <div class="info-summary-card">
+  <div v-if="beneficiary" class="info-summary-card">
 
     <!-- كارد المعلومات الأساسية -->
     <div class="info-grid">
       <div class="info-block">
-          <p class="name">mohamed</p>
-          <p class="id">803873926</p>
-          <span class="badge">مسجل</span>
+          <p class="name">{{ beneficiary?.fullName }}</p>
+          <p class="id">{{ beneficiary?.nationalId }}</p>
+          <span class="badge">
+             {{ beneficiary?.status === 'غير نشط' ? 'نشط' : 'نشط' }}
+          </span>
       </div>
         <div class="info-block center">
           <div class="item">
@@ -17,7 +19,7 @@
 
           <div class="item">
             <label>السكن</label>
-            <p>البريج</p>
+            <p>{{ beneficiary?.address }}</p>
           </div>
         </div>
 
@@ -75,8 +77,10 @@
       </div>
 
       <div class="form-actions">
-        <button class="submit" :disabled="!isFormValid" @click="submitEditRequest">طلب التعديل</button>
-        <button class="cancel">إلغاء</button>
+        <button class="submit" :disabled="!isFormValid || isSubmitting" @click="submitEditRequest">
+          {{ isSubmitting ? 'جاري الإرسال...' : 'طلب التعديل' }}
+        </button>
+        <button class="cancel" @click="router.push('/profile')">إلغاء</button>
       </div>
       <p v-if="validationMessage" class="error">
         {{ validationMessage }}
@@ -86,12 +90,30 @@
 </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch  } from 'vue'
+import api from '../../services/api'
 import { useRouter } from 'vue-router'
-import { useRequestsStore } from '../../stores/requests'
 
 const router = useRouter()
-const requestsStore = useRequestsStore()
+const beneficiary = ref(null)
+const isSubmitting = ref(false)
+
+onMounted( async() =>{
+  try{
+  const token = localStorage.getItem('accessToken')
+  const beneificiaryId = localStorage.getItem('beneficiaryId')
+
+     const response = await api.get(`/beneficiaries/profile/${beneificiaryId}`, {
+      headers: {
+        'X-Access-Token': token,
+      },
+    })
+    beneficiary.value = response.data
+    phone.value = response.data.phone?.replace(/^97/, '')
+  }catch(error){
+    console.error(error)
+  }
+})
 
 const validationMessage = computed(() => {
   if (!phone.value) return 'رقم الموبايل مطلوب'
@@ -217,20 +239,36 @@ const isFormValid = computed(() => {
   )
 })
 
-const submitEditRequest = () => {
-  requestsStore.addRequest({
-    type: 'edit',
-    title: '',
-    payload: {
+const submitEditRequest = async () => {
+  if (!isFormValid.value) return
+
+  isSubmitting.value = true
+  try {
+    const token = localStorage.getItem('accessToken')
+    const beneificiaryId = localStorage.getItem('beneficiaryId')
+
+    await api.post
+        (`/beneficiaries/${beneificiaryId}/edit-request`,
+    {
       phone: phone.value,
       governorate: governorate.value,
       area: area.value,
       neighborhood: neighborhood.value,
       housing: housing.value,
       association: association.value
-    }
-  })
-  router.push('/profile/requests')
+    },
+    {
+      headers: {
+        'X-Access-Token': token
+      }
+    })
+
+    router.push('/profile/requests')
+  }catch (error) {
+    console.error(error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 

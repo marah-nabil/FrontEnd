@@ -1,9 +1,9 @@
 <template>
   <div class="profile-layout">
-    <AppHeader :beneficiary="beneficiary" />
+    <AppHeader v-if="beneficiary" :beneficiary="beneficiary" />
 
     <main class="page-content">
-      <router-view />
+      <router-view :beneficiary="beneficiary" />
     </main>
 
     <AppFooter />
@@ -11,12 +11,33 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import api from '../services/api'
+import { useRouter } from 'vue-router'
+
 import AppHeader from '../components/profile/AppHeader.vue'
 import AppFooter from '../components/profile/AppFooter.vue'
 
-const beneficiary = {
-  fullName: 'محمد أحمد يوسف',
-}
+const router = useRouter()
+const beneficiary = ref(null)
+
+onMounted( async() =>{
+  const token = localStorage.getItem('accessToken')
+  const beneificiaryId = localStorage.getItem('beneficiaryId')
+
+  if (!token || !beneificiaryId) return
+
+  try{
+     const response = await api.get(`/beneficiaries/profile/${beneificiaryId}`, {
+      headers: {
+        'X-Access-Token': token,
+      },
+    })
+    beneficiary.value = response.data
+  }catch(error){
+    console.error(error)
+  }
+})
 </script>
 
 <style scoped>

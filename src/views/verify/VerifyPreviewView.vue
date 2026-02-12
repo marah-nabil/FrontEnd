@@ -18,7 +18,11 @@
     </template>
     <!-- 🔵 Stepper يظهر دائمًا -->
     <template #stepper v-if="currentStep > -1">
-      <StepperHeader :currentStep="currentStep" />
+      <StepperHeader
+        :currentStep="currentStep"
+        :maxReachedStep="maxReachedStep"
+        @select="goToStep"
+       />
     </template>
 
     <Transition :name="transitionName" mode="out-in">
@@ -34,33 +38,56 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+//import api from '../../services/api'
+import { computed, ref, onMounted } from 'vue'
+//import { useRouter } from 'vue-router'
 
 import VerifyLayout from '../../layout/VerifyLayout.vue'
 import StepperHeader from '../../components/stepper/StepperHeader.vue'
 
-import VerifyStartView from './VerifyStartView.vue'
 import VerifyBasicView from './VerifyBasicView.vue'
 import VerifyAdditionalView from './VerifyAdditionalView.vue'
 import VerifySuccessView from './VerifySuccessView.vue'
 
+/* const router = useRouter()
+
+const nationalId = ref('')
+const loading = ref(false)
+const error = ref('') */
+
 const currentStep = ref(0)
 
-const maxStep = 3
+const maxReachedStep = ref(0)
 const isStepValid = ref(false)
 const components = [VerifyBasicView, VerifyAdditionalView, VerifySuccessView]
 const currentComponent = computed(() => components[currentStep.value])
 
 const direction = ref<'next' | 'prev'>('next')
-const transitionName = computed(() => (direction.value === 'next' ? 'slide-left' : 'slide-right'))
+const transitionName = computed(() => (direction.value === 'next' ? 'slide-forward' : 'slide-backward'))
+
+
+onMounted(() => {
+  const token = localStorage.getItem('accessToken')
+
+  if (!token && currentStep.value > 1) {
+    currentStep.value = 0
+    maxReachedStep.value = 0
+  }
+})
+
 
 const next = () => {
   if (!isStepValid.value && currentStep.value !== 0) return
 
-  direction.value = 'next'
+  if (currentStep.value < components.length - 1) {
+    currentStep.value++
 
-  if (currentStep.value < components.length - 1) currentStep.value++
+    if (currentStep.value > maxReachedStep.value) {
+      maxReachedStep.value = currentStep.value
+    }
+  }
 }
+
 
 const prev = () => {
   direction.value = 'prev'
@@ -71,10 +98,11 @@ const prev = () => {
 }
 
 const goToStep = (step: number) => {
-  if (step <= currentStep.value) {
+  if (step <= maxReachedStep.value) {
     currentStep.value = step
   }
 }
+
 </script>
 <style scoped>
 .intro-mini {
@@ -171,8 +199,10 @@ const goToStep = (step: number) => {
 
 /* ===== الانتقال للأمام ===== */
 .slide-forward-enter-active,
-.slide-forward-leave-active {
-  transition: all 0.35s ease;
+.slide-forward-leave-active,
+.slide-backward-enter-active,
+.slide-backward-leave-active {
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
 }
 
 .slide-forward-enter-from {
@@ -185,12 +215,6 @@ const goToStep = (step: number) => {
   transform: translateX(-40px);
 }
 
-/* ===== الانتقال للخلف ===== */
-.slide-backward-enter-active,
-.slide-backward-leave-active {
-  transition: all 0.35s ease;
-}
-
 .slide-backward-enter-from {
   opacity: 0;
   transform: translateX(-40px);
@@ -200,6 +224,7 @@ const goToStep = (step: number) => {
   opacity: 0;
   transform: translateX(40px);
 }
+
 .form {
   max-width: 420px;
   margin: 0 auto;

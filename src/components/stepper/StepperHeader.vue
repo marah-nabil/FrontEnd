@@ -7,7 +7,7 @@
       :title="step.title"
       :state="getState(step.id)"
       :disabled="step.id - 1 > maxReachedStep"
-      @select="goTo"
+      @select="handleSelect"
     />
   </div>
 </template>
@@ -31,8 +31,11 @@ const getState = (stepId: number) => {
 }
 const emit = defineEmits(['select'])
 
-const goTo = (stepIndex: number) => {
-  emit('select', stepIndex)
+const handleSelect = (stepIndex: number) => {
+  // لا تسمح بالانتقال إلا إذا الخطوة المطلوبة <= الحالية
+  if (stepIndex <= props.currentStep) {
+    emit('select', stepIndex)
+  }
 }
 
 // No specific script logic needed for this component

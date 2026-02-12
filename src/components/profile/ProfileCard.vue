@@ -12,7 +12,9 @@
       </p>
       <p>
         <strong>الهاتف :</strong>
-        <span>{{ beneficiary.phone }}</span>
+        <span>{{ beneficiary.phone?.startsWith('97')
+                ? beneficiary.phone.slice(2)
+                : beneficiary.phone }}</span>
       </p>
 
       <p>

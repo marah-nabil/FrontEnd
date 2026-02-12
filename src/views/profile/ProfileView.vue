@@ -1,21 +1,27 @@
 <template>
-   <div class="page-title">
+    <div class="page-title">
         بيانات المستفيد
     </div>
   <div class="page-container">
 
-  <div class="content">
-      <ProfileCard :beneficiary="beneficiary" />
-      <FamilyTable :family="family" />
-      <InstructionsCard />
-      <PackageCard />
+    <div class="content" v-if="beneficiary">
+        <ProfileCard :beneficiary="beneficiary" />
+        <FamilyTable :family="family" />
+        <InstructionsCard />
+        <PackageCard />
 
     </div>
+
+    <div v-else>
+      <p>Loading...</p>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref ,onMounted } from 'vue'
+import api from '../../services/api'
 
 import ProfileCard from '../../components/profile/ProfileCard.vue'
 import FamilyTable from '../../components/profile/FamilyTable.vue'
@@ -23,15 +29,29 @@ import EditProfileModal from '../../components/profile/EditProfileModal.vue'
 import InstructionsCard from '../../components/profile/InstructionsCard.vue'
 import PackageCard from '../../components/profile/PackageCard.vue'
 
-import {
-  Beneficiary,
-  beneficiary as mockBeneficiary,
-  family as mockFamily,
-} from '../../mock/beneficiary'
 
-const beneficiary = ref({ ...mockBeneficiary })
-const family = ref([...mockFamily])
-const showEditModal = ref(false)
+const beneficiary = ref(null)
+const family = ref([])
+
+onMounted( async() =>{
+  const token = localStorage.getItem('accessToken')
+  const beneificiaryId = localStorage.getItem('beneficiaryId')
+
+  if (!token || !beneificiaryId) return
+
+  try{
+     const response = await api.get(`/beneficiaries/profile/${beneificiaryId}`, {
+      headers: {
+        'X-Access-Token': token,
+      },
+    })
+    beneficiary.value = response.data
+    family.value = response.data.familyMembers
+  }catch(error){
+    console.error(error)
+  }
+})
+/* const showEditModal = ref(false)
 
 const updateData = (updatedData: Partial<Beneficiary>) => {
   beneficiary.value = {
@@ -39,7 +59,7 @@ const updateData = (updatedData: Partial<Beneficiary>) => {
     ...updatedData,
   }
   showEditModal.value = false
-}
+} */
 </script>
 <style scoped>
 .page-title {

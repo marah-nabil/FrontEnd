@@ -1,34 +1,64 @@
 <template>
   <div class="additional-view">
     <label>اسم الام</label>
-    <input v-model="motherName" />
+    <input v-model="mother" />
 
     <label>تاريخ ميلاد الام </label>
     <input type="date" v-model="motherBirthDate" />
 
     <div class="actions">
       <button class="btn-outline" @click="$emit('prev')">السابق</button>
-      <button class="btn-primary" :disabled="!isValid" @click="$emit('next')">التالي</button>
+      <button class="btn-primary" :disabled="loading" @click="submit">{{ loading ? 'جاري التحقق...' : 'التالي' }}</button>
+      <p v-if="error" style="color:red; margin-top:10px">{{ error }}</p>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import api from '../../services/api'
+import { ref } from 'vue'
 
 const emit = defineEmits(['next', 'prev', 'valid'])
 
-const motherName = ref('')
+const mother = ref('')
 const motherBirthDate = ref('')
-const isValid = ref(false)
+const loading = ref(false)
+const error = ref('')
 
-// تحقق بسيط
-const validate = () => motherName.value.length > 2 && motherBirthDate.value !== ''
+const submit = async () => {
+  if (!mother.value || !motherBirthDate.value) {
+    error.value = 'يرجى ملء جميع الحقول'
+    return
+  }
 
-// نراقب أي تغيير
-watch([motherName, motherBirthDate], () => {
-  isValid.value = validate()
-  emit('valid', validate())
-})
+  const beneficiaryId = localStorage.getItem('beneficiaryId')
+  if (!beneficiaryId) {
+    error.value = 'معرف المستفيد غير موجود'
+    return
+  }
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    const response = await api.post('/beneficiaries/verify-mother', {
+      beneficiaryId: Number(beneficiaryId),
+      motherName: mother.value,
+      motherBirthDate: motherBirthDate.value
+    })
+
+    localStorage.setItem('accessToken', response.data.accessToken)
+
+    emit('next')
+  } catch (err: any) {
+    error.value =
+      err.response?.data?.error ||
+      err.response?.data ||
+      'حدث خطأ أثناء التحقق'
+  } finally {
+    loading.value = false
+  }
+}
+
 </script>
 
 <style scoped>

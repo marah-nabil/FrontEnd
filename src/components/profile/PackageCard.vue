@@ -15,7 +15,7 @@
 
       <div class="field">
         <span class="label">مكان الاستلام</span>
-        <span class="value">مركز توزيع البريج</span>
+        <span class="value">مركز الجمعية البريج</span>
       </div>
 
       <div class="field">

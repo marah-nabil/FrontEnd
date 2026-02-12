@@ -5,12 +5,18 @@
     <h2>تم التحقق بنجاح!</h2>
     <!--<p class="description">شكراً لتأكيد معلوماتك. يمكنك الآن الاستمرار في استخدام خدماتنا</p>
 -->
-    <button class="btn-primary">دخول</button>
+    <button class="btn-primary" @click="goToProfile">دخول</button>
   </div>
 </template>
 
 <script setup lang="ts">
-// No specific script logic needed for this component
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToProfile = () => {
+  router.push('/profile')
+}
 </script>
 
 <style scoped>

@@ -27,11 +27,16 @@ const routes: RouteRecordRaw[] = [
   {
    path: '/profile',
     component: () => import ('../layout/ProfileLayout.vue'),
+    beforeEnter: () => {
+      const token = localStorage.getItem('accessToken')
+      if (!token) return '/verify'
+    },
     children: [
       {
         path: '',
         name: 'profile',
         component: Profile,
+        meta: { requiresAuth: true },
       },
       {
         path: 'edit',
@@ -64,25 +69,24 @@ const router = createRouter({
   routes,
 })
 
-//router.beforeEach((to, from, next) => {
-//  const token = localStorage.getItem('token')
-//const role = localStorage.getItem('role')
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('accessToken')
+  const beneficiaryId = localStorage.getItem('beneficiaryId')
 
-//if (to.path === '/login') {
-//return next()
-//}
+  if (to.path === '/profile' && !token)  {
+    return next('/verify')
+  }
 
-//if (!token) {
-//return next('/login')
-//}
+  if (to.path === '/verify' && !token)  {
+    return next('/profile')
 
-//check role authorization
-// const allowedRoles = to.meta.role as string[] | undefined
-// if (allowedRoles && role && !allowedRoles.includes(role)) {
-//redirect based on role
-//   if (role === 'Employee') return next('/employee')
-//   return next('/beneficiary')
-// }
-//})
+  }
+   if (to.meta.requiresAuth && !token) {
+    next('/verify')
+  } else {
+    next()
+  }
+  next()
+})
 
 export default router

@@ -16,7 +16,7 @@
         <tr v-for="m in family" :key="m.id">
           <td>{{ m.relation }}</td>
           <td>{{ m.fullName }}</td>
-          <td>{{ m.birthDate }}</td>
+          <td>{{ formatDate(m.birthDate) }}</td>
           <td>{{ m.nationalId }}</td>
         </tr>
       </tbody>
@@ -31,7 +31,10 @@
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
+const formatDate = (date: string) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('en-GB')
+}
 defineProps<{
   family: {
     id: number
