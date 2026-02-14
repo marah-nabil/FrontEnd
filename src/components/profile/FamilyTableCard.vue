@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="member in members" :key="member.id">
+        <tr v-for="member in mappedMembers" :key="member.id">
           <td>{{ member.relation }}</td>
           <td>{{ member.firstName }} {{member.fatherName}}  {{member.grandFatherName }} {{ member.familyName}}</td>
           <td>{{ member.birthDate }}</td>
@@ -21,12 +21,11 @@
           <td>
             <span
               class="badge"
-              :class="member.status || 'pending'"
+              :class="member.status"
             >
-              {{ member.status === 'registered' ? 'مسجل' : member.status === 'delete_requested'
-                  ? 'طلب حذف'
-                  : 'غير مسجل'
-               }}
+              {{
+                translateStatus(member.status || 'Pending')
+              }}
             </span>
           </td>
 
@@ -47,8 +46,23 @@
 </div>
 </template>
 <script setup lang="ts">
-defineProps<{
-  members: any[]
+import { computed } from 'vue'
+
+type Member = {
+  id: number
+  relation: string
+  firstName: string
+  fatherName: string
+  grandFatherName: string
+  familyName: string
+  birthDate: string
+  idNumber: string
+  currentStatus?: number | null
+}
+
+/* Props */
+const props = defineProps<{
+  members: Member[]
 }>()
 
 const emit = defineEmits<{
@@ -56,6 +70,28 @@ const emit = defineEmits<{
   (e: 'delete', id: number): void
 }>()
 
+/* 🔹 تحويل status من رقم إلى string */
+const mappedMembers = computed(() => {
+  return props.members.map(m => ({
+    ...m,
+    status:
+      m.currentStatus === 0
+        ? 'Pending'
+        : m.currentStatus === 1
+        ? 'Approved'
+        : m.currentStatus === 2
+        ? 'Rejected'
+        : 'Pending' // default
+  }))
+})
+
+/* 🔹 ترجمة الحالة للعربي */
+function translateStatus(status: string) {
+  if (status === 'Pending') return 'قيد المراجعة'
+  if (status === 'Approved') return 'تم التعديل'
+  if (status === 'Rejected') return 'مرفوض'
+  return '-'
+}
 </script>
 
 

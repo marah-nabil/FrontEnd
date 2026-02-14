@@ -23,6 +23,10 @@
             <option>ابن</option>
             <option>ابنة</option>
             <option>زوجة</option>
+            <option>ام</option>
+            <option>اخت</option>
+            <option>اخ</option>
+            <option>زوجة أب</option>
           </select>
         </div>
 
@@ -101,6 +105,7 @@
 
 </template>
 <script setup lang="ts">
+import api from '../../services/api'
 import { reactive, watch, /*computed */} from 'vue'
 
 type FamilyMember = {
@@ -145,9 +150,33 @@ watch(
   { immediate: true }
 )
 
-const submit = () => {
-  emit('save', { ...form, id: props.member?.id })
+async function submit() {
+  const token = localStorage.getItem('accessToken')
+
+  if (props.mode === 'add') {
+    await api.post(
+      '/beneficiaries/family-members/add-request',
+      form,
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+  } else {
+     await api.post(
+      `/beneficiaries/family-members/${props.member.id}/update-request`,
+      form,
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+  }
+  emit('close')
 }
+
 
 </script>
 
@@ -274,6 +303,7 @@ textarea {
   border: none;
   padding: 10px 24px;
   border-radius: 8px;
+    font-weight: 600;
 }
 
 .cancel {
@@ -281,5 +311,7 @@ textarea {
   border: none;
   padding: 10px 24px;
   border-radius: 8px;
+  font-weight: 600;
 }
+
 </style>

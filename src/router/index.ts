@@ -5,8 +5,6 @@ import Profile from '../views/profile/ProfileView.vue'
 import Verify from '../views/verify/VerifyPreviewView.vue'
 import EditProfile from '../views/profile/EditProfile.vue'
 import FamilyMembersView from '../views/profile/FamilyMembersView.vue'
-import AddFamilyMemberView from '../views/profile/AddFamilyMemberView.vue'
-import EditFamilyMemberView from '../views/profile/EditFamilyMemberView.vue'
 import MyRequestsView from '../views/profile/MyRequestsView.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -47,14 +45,6 @@ const routes: RouteRecordRaw[] = [
         path: 'family',
         component: FamilyMembersView
       },
-      {
-        path: 'family/add',
-        component: AddFamilyMemberView
-      },
-      {
-        path: 'family/edit/:id',
-        component: EditFamilyMemberView,
-      },
        {
         path: 'requests',
         name: 'my-requests',
@@ -71,21 +61,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('accessToken')
-  const beneficiaryId = localStorage.getItem('beneficiaryId')
 
-  if (to.path === '/profile' && !token)  {
+  if (to.meta.requiresAuth && !token) {
     return next('/verify')
-  }
+   }
 
-  if (to.path === '/verify' && !token)  {
+  if (to.path === '/verify' && token)  {
     return next('/profile')
 
   }
-   if (to.meta.requiresAuth && !token) {
-    next('/verify')
-  } else {
-    next()
-  }
+
   next()
 })
 

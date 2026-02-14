@@ -30,7 +30,7 @@
         :mode="mode"
         :member="selectedMember"
         @close="showForm = false"
-        @save="/*addMemberhandleSave*/sendAddRequest"
+        @save="handleSave"
       />
 
     <ConfirmDialog
@@ -43,9 +43,10 @@
 
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRequestsStore } from '../../stores/requests'
+import { ref, onMounted } from 'vue'
+import api from '../../services/api'
 
 import FamilyTableCard from '../../components/profile/FamilyTableCard.vue'
 import FamilyMemberForm from '../../components/profile/FamilyMemberForm.vue'
@@ -64,43 +65,38 @@ type FamilyMember = {
   birthDate: string
   hasDisability: boolean
   notes?: string
+  status?: string
 }
 
-type RequestItem = {
-  id: number
-  type: 'add' | 'edit' | 'delete'
-  title: string
-  date: string
-  status: 'pending'
-  payload: FamilyMember
-}
-
-/* ================= STATE ================= */
-const members = ref<FamilyMember[]>([
-  {
-    id: 1,
-    relation: 'ابن',
-    firstName: 'محمد',
-    fatherName: 'أنس',
-    grandFatherName: 'نبيل',
-    familyName: 'سلامة',
-    birthDate: '2022-04-24',
-    idNumber: '442815338',
-    gender: 'ذكر',
-    hasDisability: false
-  }
-])
-
-const requestsStore = useRequestsStore()
-
-const requests = ref<RequestItem[]>([])
-
+const members = ref<FamilyMember[]>([])
 const showForm = ref(false)
 const mode = ref<'add' | 'edit'>('add')
 const selectedMember = ref<FamilyMember | null>(null)
 
 const showDeleteConfirm = ref(false)
 const memberToDelete = ref<FamilyMember | null>(null)
+
+/* ================= LOAD DATA ================= */
+
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem('accessToken')
+
+    const res = await api.get(
+      '/beneficiaries/family-members',
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+
+    members.value = res.data
+
+  } catch (error) {
+    console.error(error)
+  }
+})
 
 /* ================= ACTIONS ================= */
 const openAddForm = () => {
@@ -123,52 +119,98 @@ const handleSave = (data: FamilyMember) => {
   }
 }
 
-const sendAddRequest = (data: FamilyMember) => {
-  requestsStore.addRequest('add' , data)
-  /* requests.value.push({
-    id: Date.now(),
-    type: 'add',
-    title: 'طلب إضافة فرد',
-    date: new Date().toISOString().split('T')[0],
-    status: 'pending',
-    payload: data
-  }) */
-  showForm.value = false
+/* ================= ADD ================= */
+
+const sendAddRequest = async (data: FamilyMember) => {
+
+    const token = localStorage.getItem('accessToken')
+
+    await api.post(
+      '/beneficiaries/family-members/add-request',
+      {
+      relation: data.relation,
+      idNumber: data.idNumber,
+      firstName: data.firstName,
+      fatherName: data.fatherName,
+      grandFatherName: data.grandFatherName,
+      familyName: data.familyName,
+      gender: data.gender,
+      birthDate: new Date(data.birthDate).toISOString(), // 🔥 مهم
+      hasDisability: data.hasDisability,
+      notes: data.notes
+    },
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+
+    showForm.value = false
 }
 
-const sendEditRequest = (data: FamilyMember) => {
- requestsStore.addRequest('edit' , data)
- /*  requests.value.push({
-    id: Date.now(),
-    type: 'edit',
-    title: 'طلب تعديل بيانات فرد',
-    date: new Date().toISOString().split('T')[0],
-    status: 'pending',
-    payload: data
-  }) */
-  showForm.value = false
-}
+/* ================= EDIT ================= */
 
-const requestDelete = (member: FamilyMember) => {
-  memberToDelete.value = member
+const sendEditRequest = async (data: FamilyMember) => {
+  try {
+    const token = localStorage.getItem('accessToken')
+
+    await api.post(
+      `/beneficiaries/family-members/${data.id}/update-request`,
+      data,
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+
+    showForm.value = false
+
+    // تحديث الحالة فورًا
+    const member = members.value.find(m => m.id === data.id)
+    if (member) member.status = 'Pending'
+
+  } catch (error) {
+    console.error(error)
+  }
+}
+/* ================= DELETE ================= */
+
+const requestDelete = (id: number) => {
+  memberToDelete.value =
+    members.value.find(m => m.id === id) || null
   showDeleteConfirm.value = true
 }
 
-const sendDeleteRequest = () => {
-  if (!memberToDelete.value) return
-  requestsStore.addRequest('delete', memberToDelete.value)
+const sendDeleteRequest = async () => {
+  try {
+    if (!memberToDelete.value) return
 
- /*  requests.value.push({
-    id: Date.now(),
-    type: 'delete',
-    title: 'طلب حذف فرد',
-    date: new Date().toISOString().split('T')[0],
-    status: 'pending',
-    payload: memberToDelete.value
-  })
- */
-  showDeleteConfirm.value = false
-  memberToDelete.value = null
+    const token = localStorage.getItem('accessToken')
+
+    await api.post(
+      `/beneficiaries/family-members/${memberToDelete.value.id}/delete-request`,
+      {},
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+
+    const member = members.value.find(
+      m => m.id === memberToDelete.value?.id
+    )
+
+    if (member) member.status = 'Pending'
+
+    showDeleteConfirm.value = false
+    memberToDelete.value = null
+
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 
@@ -249,4 +291,5 @@ const sendDeleteRequest = () => {
 .add-member-btn:hover .plus {
   background: rgba(255,255,255,0.3);
 }
+
 </style>

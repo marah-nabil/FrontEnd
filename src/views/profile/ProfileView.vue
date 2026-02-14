@@ -51,23 +51,15 @@ onMounted( async() =>{
     console.error(error)
   }
 })
-/* const showEditModal = ref(false)
 
-const updateData = (updatedData: Partial<Beneficiary>) => {
-  beneficiary.value = {
-    ...beneficiary.value,
-    ...updatedData,
-  }
-  showEditModal.value = false
-} */
 </script>
 <style scoped>
 .page-title {
-  position: relative;          /* 🔑 هذا أهم سطر */
+  position: relative;
   max-width: 100%;
-  margin: -60px auto 20px;     /* اسحبها فوق بشكل أنعم */
+  margin: -60px auto 20px;
   padding: 0 150px;
-
+  height: 220px;
   font-size: 22px;
   font-weight: 400;
   color: #ffffff;

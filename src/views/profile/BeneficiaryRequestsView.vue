@@ -19,32 +19,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref , onMounted} from 'vue'
+import api from '../../services/api'
 import RequestsTable from '../../components/profile/RequestsTable.vue'
 
-const requests = ref([
-  {
-    id: 1,
-    type: 'طلب إضافة فرد',
-    date: '2026-01-18',
-    status: 'pending',
-    notes: ''
-  },
-  {
-    id: 2,
-    type: 'طلب تعديل بيانات',
-    date: '2026-01-15',
-    status: 'approved',
-    notes: 'تمت الموافقة'
-  },
-  {
-    id: 3,
-    type: 'طلب حذف فرد',
-    date: '2026-01-10',
-    status: 'rejected',
-    notes: 'الطلب غير مستوفي الشروط'
+const requests = ref([])
+onMounted( async() =>{
+  try{
+    const token = localStorage.getItem('accessToken')
+
+    const res = await api.get(`/beneficiaries/requests`, {
+      headers: {
+        'X-Access-Token': token,
+      },
+
+    })
+
+    requests.value = res.data.map(r => ({
+      id: r.id,
+      type: 'طلب تعديل بيانات',
+      date: r.requestDate,
+        status: r.status,
+        /*   .currentStatus === 0
+            ? 'Pending'
+            : r.currentStatus === 1
+            ? 'Approved'
+            : 'Rejected', */
+      notes: r.description || ''
+    }))
+  }catch(error){
+    console.error(error)
   }
-])
+})
+
 </script>
 
 <style scoped>

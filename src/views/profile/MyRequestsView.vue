@@ -52,7 +52,7 @@
               :key="req.id"
             >
               <td>{{ startIndex + index + 1 }}</td>
-              <td>{{ req.title }}</td>
+              <td>{{ req.type }}</td>
               <td>{{ req.date }}</td>
               <td>
                 <span
@@ -60,17 +60,91 @@
                   :class="req.status"
                 >
                   {{
-                    req.status === 'pending'
+                    req.status === 'Pending'
                       ? 'قيد المراجعة'
-                      : req.status === 'approved'
+                      : req.status === 'Approved'
                       ? 'مقبول'
                       : 'مرفوض'
                   }}
                 </span>
               </td>
+              <td>{{ req.notes || '-' }}</td>
+              <td>
+                <button
+                  class="action-btn view"
+                  @click="openModal(req)"
+                >
+                  عرض
+                </button>
+
+                <button
+                  v-if="req.status === 'Pending'"
+                  class="action-btn cancel"
+                  @click="cancelRequest(req)"
+                >
+                  إلغاء
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
+        <div v-if="selectedRequest" class="modal-overlay">
+
+        <div class="modal">
+
+          <div class="modal-header">
+            <h3>تفاصيل الطلب</h3>
+            <button class="close-btn" @click="selectedRequest = null">✕</button>
+          </div>
+
+          <div class="modal-body">
+
+            <div class="info-row">
+              <span>تاريخ الطلب:</span>
+              <strong>{{ formatDate(selectedRequest.requestDate) }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>الحالة:</span>
+              <strong>{{ translateStatus(selectedRequest.currentStatus) }}</strong>
+            </div>
+
+            <div
+              v-if="selectedRequest.rejectionReason"
+              class="info-row rejection"
+            >
+              <span>سبب الرفض:</span>
+              <strong>{{ selectedRequest.rejectionReason }}</strong>
+            </div>
+
+            <hr />
+
+            <h4>البيانات الجديدة المطلوبة</h4>
+
+            <div
+              v-for="(value, key) in parsedChanges"
+              :key="key"
+              class="change-row"
+            >
+              <div class="field-name">{{ key }}</div>
+
+              <div class="values">
+                <span class="old">
+                  {{ profileData[key] || '-' }}
+                </span>
+
+                <span class="arrow">→</span>
+
+                <span class="new">
+                  {{ value || '-' }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
 
         <!-- FOOTER -->
         <div class="table-footer">
@@ -111,28 +185,119 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRequestsStore } from '../../stores/requests'
-import { storeToRefs } from 'pinia'
+import { ref, computed ,onMounted} from 'vue'
+import api from '../../services/api'
 
-const store = useRequestsStore()
-const { requests } = storeToRefs(store)
+const requests = ref([])
 
-const search = ref('')
 const page = ref(1)
 const pageSize = ref(10)
 
-/* FILTER */
-const filteredRequests = computed(() => {
-  return requests.value.filter(r =>
-    r.title.includes(search.value)
-  )
+const selectedRequest = ref(null)
+const profileData = ref({})
+
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem('accessToken')
+
+    const res = await api.get(`/beneficiaries/requests`, {
+      headers: {
+        'X-Access-Token': token,
+      },
+    })
+    const familyRes = await api.get(
+      '/beneficiaries/family-member-update-requests',
+      {
+        headers: {
+          'X-Access-Token': token
+        }
+      }
+    )
+
+
+    const beneficiaryRequests = res.data.map(r => ({
+      id: r.id,
+      type: r.requestType === 'Update' ? 'طلب تعديل بيانات' : 'طلب تعديل بيانات',
+      date: new Date(r.date).toLocaleDateString(),
+      status: r.status, // لأنه أنتِ أصلاً مرجّعة string من الباك
+      notes: r.notes
+    }))
+
+    const familyRequests = familyRes.data.map(r => ({
+      id: r.id,
+      type:
+        r.requestType === 'Add'
+        ? 'طلب إضافة فرد أسرة'
+        : r.requestType === 'Delete'
+        ? 'طلب حذف فرد أسرة'
+        : 'طلب تعديل فرد أسرة',
+
+      date: new Date(r.date).toLocaleDateString(),
+        status:
+          r.status === 0
+            ? 'Pending'
+            : r.status === 1
+            ? 'Approved'
+            : 'Rejected',
+      notes: r.rejectionReason || ''
+    }))
+
+    requests.value = [
+      ...beneficiaryRequests,
+      ...familyRequests
+    ]
+  } catch (error) {
+    console.error(error)
+  }
 })
 
-/* PAGINATION */
-const startIndex = computed(() => {
-  return (page.value - 1) * pageSize.value
+function openModal(req) {
+  selectedRequest.value = req
+}
+const parsedChanges = computed(() => {
+  if (!selectedRequest.value.requestedChanges) return {}
+
+  try {
+    return JSON.parse(selectedRequest.value.requestedChanges)
+  } catch {
+    return {}
+  }
 })
+
+function translateStatus(status) {
+  if (status === 0) return 'قيد المراجعة'
+  if (status === 1) return 'مقبول'
+  if (status === 2) return 'مرفوض'
+  return '-'
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-GB')
+}
+
+async function cancelRequest(req) {
+  const token = localStorage.getItem('accessToken')
+    if(req.type === 'طلب تعديل بيانات') {
+      await api.delete(`/beneficiaries/requests/${req.id}`, {
+        headers: { 'X-Access-Token': token }
+      })
+    } else {
+      await api.delete(`/beneficiaries/family-member-update-requests/${req.id}`, {
+        headers: { 'X-Access-Token': token }
+      })
+    }
+
+    requests.value = requests.value.filter(r => r.id !== req.id)
+}
+
+
+/* FILTER */
+const filteredRequests = computed(() => requests.value)
+
+/* PAGINATION */
+const startIndex = computed(() => (page.value - 1) * pageSize.value)
 
 const endIndex = computed(() => {
   return Math.min(
@@ -141,12 +306,9 @@ const endIndex = computed(() => {
   )
 })
 
-const paginatedRequests = computed(() => {
-  return filteredRequests.value.slice(
-    startIndex.value,
-    endIndex.value
-  )
-})
+const paginatedRequests = computed(() =>
+  filteredRequests.value.slice(startIndex.value, endIndex.value)
+)
 
 </script>
 
@@ -287,5 +449,105 @@ const paginatedRequests = computed(() => {
   padding: 32px;
   color: #6b7280;
 }
+.action-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
 
+.view {
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+}
+
+.cancel {
+  background: #ef4444;
+  color: white;
+  margin-right: 6px;
+  font-weight: 600;
+}
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  width: 700px;
+  border-radius: 10px;
+  padding: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rejection {
+  color: #dc2626;
+}
+
+.change-row {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.field-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.values {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.old {
+  color: #6b7280;
+}
+
+.new {
+  color: #0b5ed7;
+  font-weight: 600;
+}
+
+.arrow {
+  color: #9ca3af;
+}
+.status {
+  color: #079837;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+}
 </style>

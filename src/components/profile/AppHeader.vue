@@ -3,9 +3,9 @@
     <div class="header-full">
       <!-- RIGHT -->
       <div class="header-right">
-        <img src="@/assets/Logo2.jpeg" class="logo" />
+        <img src="@/assets/Logo2.png" class="logo" />
         <nav class="header-nav">
-          <a @click="goProfile">الرئيسية</a>
+          <a class="requests-btn" @click="goProfile">الرئيسية</a>
           <router-link
             to="/profile/requests"
             class="requests-btn"
@@ -67,7 +67,7 @@
     </div>
     <ConfirmDaialog
       v-if="showLogoutConfirm"
-      title="تنبيه"
+      title="انـتـبــه"
       message="أنت على وشك تسجيل الخروج، هل ترغب في تأكيد العملية؟"
       confirmText="تسجيل الخروج"
       @close="showLogoutConfirm = false"
@@ -127,8 +127,8 @@ const openLogoutConfirm = () => {
 }
 
 const confirmLogout = () =>{
-  // localStorage.removeItem('token')
-  // localStorage.removeItem('user')
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('beneficiary')
 
   showLogoutConfirm.value = false
 
@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
   top: 0;
   width: 100%;
   height: 70px;
-  background: linear-gradient(135deg, #fdf912, #ff4704);
+  color: #111;
   color: white;
   z-index: 1000;
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -165,14 +165,6 @@ onBeforeUnmount(() => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-/*
-.app-header:not(.scrolled) {
-  position: relative;
-  height: 30vh;
-  background: linear-gradient(135deg, #fdf912, #ff4704);
-  color: white;
-}
-*/
 
 .header-full {
   width: 100%;
@@ -182,6 +174,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   direction: rtl;
+  margin-top: 10px;
 }
 
 /* RIGHT */
@@ -209,7 +202,7 @@ onBeforeUnmount(() => {
 /* LEFT */
 .header-left {
   position: relative;
-  padding-left: 100px;
+  padding-left: 50px;
 }
 
 .user-click {
@@ -222,8 +215,8 @@ onBeforeUnmount(() => {
 .avatar {
   width: 36px;
   height: 36px;
-  background: #e6edff;
-  color: #2f5be7;
+  background: #fff;
+  color: #0d9940;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -302,6 +295,7 @@ onBeforeUnmount(() => {
   border: 1px solid #d1d5db;
   background: #fff;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .btn-logout {
@@ -311,24 +305,31 @@ onBeforeUnmount(() => {
   background: #2563eb;
   color: #fff;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .logo {
-  height: 48px;
+  margin-top: 15px;
+  height: 70px;
+  background: transparent;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
 }
-
-.header-nav a {
-  margin-left: 16px;
+.requests-btn {
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 6px;
   text-decoration: none;
-  color: #111;
   font-weight: 500;
-  font-size: 14px;
-  margin-left: 16px;
-  text-decoration: none;
-  color: #111;
-  font-weight: 500;
+  margin-top: 50px;
 }
-@media (max-width: 768px) {
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  cursor: pointer;
+}
+@media (max-width: 700px) {
   .header-nav {
     display: none;
   }
@@ -340,33 +341,47 @@ onBeforeUnmount(() => {
     display: block;
   }
 }
-/* HAMBURGER */
-.hamburger {
-  display: none;
-  font-size: 26px;
-  cursor: pointer;
-}
+
 
 
 .mobile-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.4);
+  z-index: 999;
   display: flex;
+    direction: rtl;
+
   justify-content: flex-end;
 }
 .mobile-menu {
+    direction: rtl;
+
    width: 260px;
   background: #fff;
   height: 100%;
-  padding: 20px;
+  padding: 24px;
+    display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: slideIn .3s ease;
 }
-.mobile-menu .danger {
+.mobile-menu a.danger {
   color: #c0392b;
+}
+.mobile-menu a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .mobile-user {
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+}
+@keyframes slideIn {
+  from { transform: translateX(0); }
+  to { transform: translateX(2%); }
 }
 </style>

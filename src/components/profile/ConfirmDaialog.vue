@@ -38,7 +38,11 @@ defineEmits(['close', 'confirm'])
   justify-content: center;
   z-index: 99999; /* أعلى من الهيدر */
 }
-
+.confirm-modal h3{
+  font-size: 36px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
 .confirm-modal {
   width: 360px;
   background: #fff;
@@ -71,6 +75,7 @@ defineEmits(['close', 'confirm'])
   border: 1px solid #d1d5db;
   background: #fff;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .btn-confirm {
@@ -80,5 +85,6 @@ defineEmits(['close', 'confirm'])
   background: #e92304;
   color: #fff;
   cursor: pointer;
+  font-weight: 600;
 }
 </style>

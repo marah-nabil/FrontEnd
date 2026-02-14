@@ -19,6 +19,11 @@
           <td>{{ formatDate(m.birthDate) }}</td>
           <td>{{ m.nationalId }}</td>
         </tr>
+        <tr v-if="family.length === 0">
+            <td colspan="4" class="empty">
+              لا يوجد أفراد أسرة مسجلين
+            </td>
+          </tr>
       </tbody>
     </table>
     <div class="card-footer">
@@ -40,8 +45,8 @@ defineProps<{
     id: number
     relation: string
     fullName: string
-    birthDate: string
-    nationalId: number
+    birthDate: string | null
+    nationalId: string
   }[]
 }>()
 </script>

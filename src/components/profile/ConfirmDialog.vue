@@ -107,6 +107,7 @@ defineEmits(['confirm', 'close'])
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .confirm {
@@ -116,6 +117,7 @@ defineEmits(['confirm', 'close'])
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .confirm:hover {

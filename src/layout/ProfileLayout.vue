@@ -45,6 +45,7 @@ onMounted( async() =>{
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: rgb(212, 49, 49);
 }
 
 .page-content {
