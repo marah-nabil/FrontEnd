@@ -224,24 +224,27 @@ const sendDeleteRequest = async () => {
 
 /* HERO */
 .page-hero {
-  height: 260px;
-  background: linear-gradient(135deg, #0b5ed7, #18bfae);
+   max-width: 100%;
   display: flex;
   align-items: flex-end;
-  padding: 0 80px 60px;
-  color: #fff;
+  padding: 0 100px 50px;
+  height: 250px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0adff3, #facc15);
+  direction: rtl;
+  text-align: right;
 }
 
 .page-hero h1 {
-  font-size: 24px;
+   font-size: 26px;
   font-weight: 400;
-  margin: 80px;
+  margin-right: 40px;
 }
 
 /* CONTENT */
 .page-content {
-  max-width: 1200px;
-  margin: -100px auto 80px; /* يطلع الكارد فوق الهيرو */
+  max-width: 1250px;
+  margin: 0 auto -50px; /* يطلع الكارد فوق الهيرو */
   padding: 0 24px;
 }
 
@@ -249,15 +252,20 @@ const sendDeleteRequest = async () => {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(0,0,0,.08);
-  padding: 24px;
+  padding: 28px;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .add-member-btn {
   display: inline-flex;
   align-items: center;
@@ -270,7 +278,7 @@ const sendDeleteRequest = async () => {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .add-member-btn .plus {
@@ -288,8 +296,63 @@ const sendDeleteRequest = async () => {
 .add-member-btn:hover {
   background: #15803d; /* أغمق */
 }
-.add-member-btn:hover .plus {
-  background: rgba(255,255,255,0.3);
+
+
+@media (max-width: 768px) {
+
+  /* HERO */
+  .page-hero {
+    height: 200px;
+    padding: 0 24px 30px;
+    align-items: flex-end;
+  }
+
+  .page-hero h1 {
+    font-size: 20px;
+  }
+
+  /* CONTENT */
+  .page-content {
+    margin: 0 auto 40px;
+    padding: 0 16px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  /* HEADER STACK */
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .card-header h3 {
+    font-size: 16px;
+  }
+
+  /* BUTTON FULL WIDTH */
+  .add-member-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 15px;
+  }
+
+  /* جدول داخل FamilyTableCard */
+  :deep(table) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  :deep(table th),
+  :deep(table td) {
+    font-size: 13px;
+    padding: 8px;
+  }
+
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="page-title">
-        بيانات المستفيد
+       <h1> بيانات المستفيد</h1>
     </div>
   <div class="page-container">
 
@@ -55,25 +55,22 @@ onMounted( async() =>{
 </script>
 <style scoped>
 .page-title {
-  position: relative;
   max-width: 100%;
-  margin: -60px auto 20px;
-  padding: 0 150px;
-  height: 220px;
-  font-size: 22px;
-  font-weight: 400;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 100px 50px;
+  height: 250px;
   color: #ffffff;
-
+  background: linear-gradient(135deg, #0adff3, #facc15);
   direction: rtl;
   text-align: right;
+}
+.page-title h1 {
+  font-size: 26px;
+  font-weight: 400;
+  margin-right: 40px;
+}
 
-  z-index: 1000;
-}
-@media (max-width: 1024px) {
-  .page-title {
-    padding-right: 50px;
-  }
-}
 .page-container {
   min-height: 100vh;
   background: linear-gradient(
@@ -99,30 +96,36 @@ onMounted( async() =>{
   gap: 40px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+/* ================= MOBILE STYLE ================= */
+@media (max-width: 768px) {
+
+  .page-title {
+    height: 200px;
+    margin: -40px 0 0;
+    padding: 0 50px 20px;
+    font-size: 18px;
+    align-items: flex-end;
   }
 
-  .logo {
-    margin: 0 2rem 0 0;
+  .page-title h1 {
+    font-size: 20px;
   }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+  .page-container {
+    padding: 20px 15px;
   }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .content {
+    gap: 25px;
   }
+
+  /* خلي كل كرت ياخذ عرض كامل */
+  .content > * {
+    width: 100%;
+  }
+
+}
+body {
+  overflow-x: hidden;
 }
 </style>

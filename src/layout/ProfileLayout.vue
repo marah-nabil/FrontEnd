@@ -13,12 +13,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import api from '../services/api'
-import { useRouter } from 'vue-router'
 
 import AppHeader from '../components/profile/AppHeader.vue'
 import AppFooter from '../components/profile/AppFooter.vue'
 
-const router = useRouter()
 const beneficiary = ref(null)
 
 onMounted( async() =>{
@@ -45,11 +43,10 @@ onMounted( async() =>{
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: rgb(212, 49, 49);
 }
 
 .page-content {
-  padding-top: 70px;
+  padding-top: 0px;
   min-height: calc(100vh - 140px);
   flex: 1;
 }

@@ -16,7 +16,7 @@
         <tr v-for="member in mappedMembers" :key="member.id">
           <td>{{ member.relation }}</td>
           <td>{{ member.firstName }} {{member.fatherName}}  {{member.grandFatherName }} {{ member.familyName}}</td>
-          <td>{{ member.birthDate }}</td>
+          <td>{{ member.birthDate?.split('T')[0] }}</td>
           <td>{{ member.idNumber }}</td>
           <td>
             <span
@@ -264,6 +264,67 @@ button:disabled {
 .actions button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+/* ================= MOBILE CARD VIEW ================= */
+@media (max-width: 768px) {
+
+  .table-wrapper {
+    border: none;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    background: #fff;
+    margin-bottom: 16px;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.06);
+    border: 1px solid #f1f5f9;
+  }
+
+  .table td {
+    border: none;
+    padding: 8px 0;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* عنوان لكل حقل */
+  .table td:nth-child(1)::before { content: "العلاقة"; font-weight:600; color:#6b7280; }
+  .table td:nth-child(2)::before { content: "الاسم"; font-weight:600; color:#6b7280; }
+  .table td:nth-child(3)::before { content: "تاريخ الميلاد"; font-weight:600; color:#6b7280; }
+  .table td:nth-child(4)::before { content: "رقم الهوية"; font-weight:600; color:#6b7280; }
+  .table td:nth-child(5)::before { content: "الحالة"; font-weight:600; color:#6b7280; }
+
+  .table td::before {
+    margin-left: 10px;
+  }
+
+  /* الأزرار */
+  .actions {
+        width: 80px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .actions button {
+    width: 80px;
+    justify-content: center;
+  }
+
 }
 
 </style>

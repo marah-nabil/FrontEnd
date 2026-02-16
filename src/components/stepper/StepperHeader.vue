@@ -55,4 +55,15 @@ const handleSelect = (stepIndex: number) => {
   padding-right: 90px; /* محاذاة مع الفورم */
   margin-top: 20px;
 }
+@media (max-width: 992px) {
+
+  .stepper {
+    width: 100%;
+    padding: 0;
+    margin: 20px 0;
+    justify-content: center;
+  }
+
+}
+
 </style>

@@ -20,39 +20,20 @@ const goToProfile = () => {
 </script>
 
 <style scoped>
-.form {
-  max-width: 420px;
-}
-
-.field {
-  margin-bottom: 20px;
-}
-
-.btn-primary {
-  background: #cfa24d;
-  color: #fff;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 6px;
-  margin-right: 620px;
-  cursor: pointer;
-}
-
 .success-view {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
   text-align: center;
-  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.success-view h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  margin-right: 250px;
-  color: #333;
-}
+
+/* ICON */
 .icon {
-  width: 55px;
-  height: 55px;
-  margin: 0 auto 10px;
-  margin-right: 310px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   background-color: #4caf50;
   font-size: 36px;
@@ -60,12 +41,41 @@ const goToProfile = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
 }
 
-.description {
-  font-size: 14px;
-  margin-bottom: 25px;
-  margin-right: 180px;
-  color: #666;
+/* TITLE */
+.success-view h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
 }
+
+/* BUTTON */
+.btn-primary {
+  background: #cfa24d;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #b89242;
+}
+@media (max-width: 768px) {
+
+  .success-view {
+    padding: 0 20px;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+
+}
+
 </style>

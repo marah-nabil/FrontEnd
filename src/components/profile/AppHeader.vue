@@ -39,29 +39,15 @@
      <div v-if="mobileOpen" class="mobile-overlay" @click="mobileOpen = false">
       <div class="mobile-menu" @click.stop>
         <p class="mobile-user">{{ beneficiary.fullName }}</p>
-        <a href="#">الرئيسية</a>
-        <a href="#">الطلبات</a>
+        <a class="requests-btn" @click="goProfile">الرئيسية</a>
+          <router-link
+            to="/profile/requests"
+            class="requests-btn"
+          >
+            الطلبات
+          </router-link>
         <a @click="goProfile">الملف الشخصي</a>
         <a class="danger" @click.stop="openLogoutConfirm">تسجيل الخروج</a>
-        <!-- Logout Confirm -->
-         <!--  <div v-if="showLogoutConfirm" class="logout-overlay">
-            <div class="logout-modal">
-              <h3>تنبيه</h3>
-              <p>
-                أنت على وشك تسجيل الخروج، هل ترغب في تأكيد العملية؟
-              </p>
-
-              <div class="actions">
-                <button class="btn-cancel" @click="showLogoutConfirm = false">
-                  إلغاء
-                </button>
-
-                <button class="btn-logout" @click="confirmLogout">
-                  تسجيل الخروج
-                </button>
-              </div>
-          </div>
-        </div> -->
 
       </div>
     </div>
@@ -350,36 +336,34 @@ onBeforeUnmount(() => {
   background: rgba(0,0,0,.4);
   z-index: 999;
   display: flex;
-    direction: rtl;
-
+  direction: rtl;
   justify-content: flex-end;
 }
 .mobile-menu {
-    direction: rtl;
-
-   width: 260px;
+  width: 260px;
+  height: 100vh;
   background: #fff;
-  height: 100%;
-  padding: 24px;
-    display: flex;
+  padding: 40px 25px;
+  display: flex;
   flex-direction: column;
   gap: 18px;
-  animation: slideIn .3s ease;
+}
+.mobile-menu a,
+.mobile-menu .requests-btn {
+  text-decoration: none;
+  color: #111827;
+  font-size: 16px;
+  padding: 10px 0;
+  display: block;
 }
 .mobile-menu a.danger {
   color: #c0392b;
 }
 .mobile-menu a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  cursor: pointer;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.mobile-user {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
 @keyframes slideIn {
   from { transform: translateX(0); }
   to { transform: translateX(2%); }

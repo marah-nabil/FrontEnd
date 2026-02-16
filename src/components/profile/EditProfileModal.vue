@@ -275,24 +275,24 @@ const submitEditRequest = async () => {
 
 <style scoped>
 .page-wrapper {
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
   padding: 140px 24px 60px;
 }
 
 .info-summary-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 24px 32px;
-  transform: translateY(-60px);
-  margin-bottom: 32px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  border-radius: 14px;
+  padding: 32px 36px;
+  transform: translateY(-90px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   direction: rtl;
 }
 .form-card {
   background: #fff;
   border-radius: 16px;
   padding: 32px;
+    transform: translateY(-40px);
   box-shadow: 0 8px 24px rgba(0,0,0,.06);
 }
 .info-grid {
@@ -306,60 +306,31 @@ const submitEditRequest = async () => {
   flex-direction: column;
   gap: 10px;
 }
-.info-block:first-child {
-  align-items: flex-start;
-}
 
-.info-block.center {
-  text-align: center;
-}
-.item p {
-  font-size: 15px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.info-block label {
-  font-size: 13px;
-  color: #6b7280;
-}
 .name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: #2563eb;
 }
 .id {
   font-size: 14px;
   color: #2563eb;
-  font-weight: 500;
 }
 
 .badge {
-  margin-top: 8px;
-  align-self: flex-start;
   background: #14b8a6;
   color: #fff;
   padding: 4px 14px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 600;
-}
-/* 📱 موبايل */
-@media (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-    text-align: right;
-  }
-
-  .info-block.center {
-    text-align: right;
-  }
+  width: fit-content;
 }
 /* كارد الفورم */
 .form-card {
   background: #fff;
   border-radius: 16px;
   padding: 36px 40px;
+  transform: translateY(-40px);
   direction: rtl;
   box-shadow: 0 10px 30px rgba(0,0,0,.06);
 }
@@ -381,20 +352,15 @@ const submitEditRequest = async () => {
   color: #374151;
   font-weight: 500;
 }
-
-.form-field label span {
-  color: #e11d48;
-}
-
 /* INPUTS */
 .form-field input,
 .form-field select {
-  height: 44px;
+  height: 46px;
   padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 14px;
-  transition: border-color .2s, box-shadow .2s;
+  transition: .2s ease;
 }
 
 .form-field input:focus,
@@ -438,7 +404,56 @@ const submitEditRequest = async () => {
 .error {
   color: #dc2626;
   font-size: 13px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
+@media (max-width: 768px) {
 
+  .page-wrapper {
+    padding: 110px 16px 40px;
+  }
+
+  .info-summary-card {
+    padding: 20px;
+    transform: translateY(-60px);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-card {
+    padding: 20px;
+    transform: translateY(-20px);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;   /* 👈 عمود واحد في الجوال */
+    gap: 18px;
+  }
+
+  .form-field input,
+  .form-field select {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;   /* 👈 الأزرار تحت بعض */
+    gap: 10px;
+  }
+
+  .submit,
+  .cancel {
+    width: 100%;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .id {
+    font-size: 13px;
+  }
+}
 </style>

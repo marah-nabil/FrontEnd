@@ -262,4 +262,97 @@ const goToStep = (step: number) => {
   border-color: #6fdad5;
   background: #fff;
 }
+/* ================= MOBILE VERIFY ================= */
+@media (max-width: 768px) {
+
+  /* خلي الصفحة عمودية */
+  .verify-layout,
+  .verify-wrapper,
+  .layout-container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  /* خلي القسم الأيسر فوق */
+  .intro-mini {
+    order: -1;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .intro-mini img {
+    margin: 0 auto 20px;
+    height: 80px;
+  }
+
+  .intro-mini h2 {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+  }
+
+  .intro-mini h3 {
+    font-size: 16px;
+    margin: 0 0 15px 0;
+  }
+
+  .intro-mini p {
+    font-size: 14px;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  /* Stepper يصغر */
+  .stepper {
+    gap: 25px;
+    margin: 20px 0;
+  }
+
+  .stepper-item {
+    min-width: auto;
+  }
+
+  /* الفورم */
+  .form {
+    max-width: 100%;
+    padding: 0 20px;
+  }
+
+  .field {
+    margin: 0 0 16px 0;
+  }
+
+  .field label {
+    margin: 0 0 6px 0;
+  }
+
+  .field input {
+    margin: 0;
+  }
+
+}
+@media (max-width: 992px) {
+
+  .intro-mini img {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .intro-mini h2,
+  .intro-mini h3,
+  .intro-mini p {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 10px;
+  }
+
+  .field,
+  .field label,
+  .field input {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+}
+
 </style>

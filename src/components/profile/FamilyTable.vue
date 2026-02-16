@@ -14,10 +14,10 @@
       </thead>
       <tbody>
         <tr v-for="m in family" :key="m.id">
-          <td>{{ m.relation }}</td>
-          <td>{{ m.fullName }}</td>
-          <td>{{ formatDate(m.birthDate) }}</td>
-          <td>{{ m.nationalId }}</td>
+          <td data-label="العلاقة">{{ m.relation }}</td>
+          <td data-label="الاسم">{{ m.fullName }}</td>
+          <td data-label="تاريخ الميلاد">{{ formatDate(m.birthDate) }}</td>
+          <td data-label="رقم الهوية">{{ m.nationalId }}</td>
         </tr>
         <tr v-if="family.length === 0">
             <td colspan="4" class="empty">
@@ -109,13 +109,46 @@ defineProps<{
 .edit-btn:hover {
   background-color: #276749;
 }
+/* ================= MOBILE TABLE ================= */
 @media (max-width: 768px) {
-  .family-grid {
-    grid-template-columns: 120px 1fr;
+
+  .family-card table,
+  .family-card thead,
+  .family-card tbody,
+  .family-card th,
+  .family-card td,
+  .family-card tr {
+    display: block;
+    width: 100%;
   }
-  .card-footer  {
-    justify-content: center;
+
+  .family-card thead {
+    display: none; /* نخفي رأس الجدول */
   }
+
+  .family-card tr {
+    background: #f9fafb;
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  }
+
+  .family-card td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border: none;
+    font-size: 14px;
+  }
+
+  .family-card td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #374151;
+  }
+
 }
+
 
 </style>

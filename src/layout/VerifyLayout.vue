@@ -74,4 +74,32 @@
 .content-wrapper {
   flex: 1;
 }
+
+  /* ================= MOBILE ================= */
+@media (max-width: 992px) {
+
+  .verify-layout {
+    flex-direction: column;   /* بدل صف -> عمودي */
+  }
+
+  .left-panel {
+    width: 100%;
+    height: 260px;           /* ارتفاع ثابت للبنر */
+    padding: 40px 20px;
+    order: -1;               /* 👈 يخليها بالأعلى */
+    text-align: center;
+  }
+
+  .left-panel h1 {
+    font-size: 24px;
+    line-height: 1.5;
+  }
+
+  .right-panel {
+    width: 100%;
+    padding: 20px;
+  }
+
+}
+
 </style>

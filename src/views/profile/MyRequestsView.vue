@@ -51,10 +51,10 @@
               v-for="(req, index) in paginatedRequests"
               :key="req.id"
             >
-              <td>{{ startIndex + index + 1 }}</td>
-              <td>{{ req.type }}</td>
-              <td>{{ req.date }}</td>
-              <td>
+              <td data-label="#">{{ startIndex + index + 1 }}</td>
+              <td data-label="نوع الطلب">{{ req.type }}</td>
+              <td data-label="تاريخ الطلب">{{ req.date }}</td>
+              <td data-label="الحالة">
                 <span
                   class="status"
                   :class="req.status"
@@ -68,8 +68,8 @@
                   }}
                 </span>
               </td>
-              <td>{{ req.notes || '-' }}</td>
-              <td>
+              <td data-label="ملاحظات">{{ req.notes || '-' }}</td>
+              <td data-label="الإجراء">
                 <button
                   class="action-btn view"
                   @click="openModal(req)"
@@ -218,6 +218,9 @@ onMounted(async () => {
     const beneficiaryRequests = res.data.map(r => ({
       id: r.id,
       type: r.requestType === 'Update' ? 'طلب تعديل بيانات' : 'طلب تعديل بيانات',
+      requestDate: r.date,
+      currentStatus: r.status,
+      requestedChanges: r.requestedChanges,
       date: new Date(r.date).toLocaleDateString(),
       status: r.status, // لأنه أنتِ أصلاً مرجّعة string من الباك
       notes: r.notes
@@ -231,7 +234,9 @@ onMounted(async () => {
         : r.requestType === 'Delete'
         ? 'طلب حذف فرد أسرة'
         : 'طلب تعديل فرد أسرة',
-
+        requestDate: r.requestDate,
+        currentStatus: r.status,
+        requestedChanges: r.requestedChanges,
       date: new Date(r.date).toLocaleDateString(),
         status:
           r.status === 0
@@ -318,21 +323,25 @@ const paginatedRequests = computed(() =>
   direction: rtl;
 }
 .page-hero {
-  height: 260px;
-  background: linear-gradient(135deg, #facc15, #f97316);
+  max-width: 100%;
   display: flex;
   align-items: flex-end;
-  padding: 0 210px 150px;
-  color: #fff;
+  padding: 0 100px 50px;
+  height: 250px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0adff3, #facc15);
+  direction: rtl;
+  text-align: right;
 }
 
 .page-hero h1 {
   font-size: 26px;
-  font-weight: 500;
+  font-weight: 400;
+  margin-right: 40px;
 }
 
 .page-content {
-  margin-top: -120px;       /* يطلع الكارد فوق الهيرو */
+  margin-top: 0px;       /* يطلع الكارد فوق الهيرو */
   padding-bottom: 80px;
 }
 
@@ -550,4 +559,96 @@ const paginatedRequests = computed(() =>
   font-weight: 600;
   display: inline-block;
 }
+/* ================= MOBILE STYLE ================= */
+@media (max-width: 768px) {
+
+  .page-hero {
+    height: 200px;
+    padding: 0 30px 30px;
+  }
+
+  .page-hero h1 {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  /* اخفاء رأس الجدول */
+  .requests-table thead {
+    display: none;
+  }
+
+  .requests-table,
+  .requests-table tbody,
+  .requests-table tr,
+  .requests-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .requests-table tr {
+    background: #fff;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+
+  .requests-table td {
+    text-align: right;
+    padding: 8px 0;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+
+  .requests-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  /* الأزرار */
+  .action-btn {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .requests-table td:last-child {
+    gap: 8px;
+  }
+
+  /* الفوتر */
+  .table-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
+
+  /* المودال */
+  .modal {
+    width: 95%;
+    padding: 16px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .values {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 </style>

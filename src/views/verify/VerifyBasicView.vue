@@ -56,75 +56,99 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.form {
-  max-width: 420px;
-}
-
-.field {
-  margin-bottom: 20px;
+.basic-view {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 label {
   display: block;
   font-size: 14px;
   margin-bottom: 6px;
-  margin-left: 100px;
-  margin-right: 100px;
   color: #333;
+  font-weight: 500;
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-left: 100px;
-  margin-right: 100px;
+  border-radius: 8px;
   font-size: 14px;
+  margin-bottom: 18px;
+  transition: 0.2s;
 }
 
 input:focus {
   outline: none;
   border-color: #cfa24d;
+  box-shadow: 0 0 0 2px rgba(207,162,77,.15);
 }
+
+/* BUTTONS */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .btn-primary {
   background: #cfa24d;
   color: #fff;
   border: none;
   padding: 12px 24px;
-  margin-left: 0px;
-  margin-right: 140px;
   border-radius: 8px;
   font-size: 15px;
   cursor: pointer;
+  transition: 0.2s;
 }
+
+.btn-primary:hover {
+  background-color: #b89242;
+}
+
 .btn-outline {
   background: #fff;
   border: 1px solid #ccc;
-  padding: 12px 26px;
+  padding: 12px 24px;
   border-radius: 8px;
-  margin-left: 20px;
-  margin-right: 100px;
   font-size: 14px;
   cursor: pointer;
 }
-.basic-view {
-  max-width: 420px;
-}
+
 .basic-view h2 {
-  font-size: 26px;
+  font-size: 22px;
   margin-bottom: 10px;
   color: #333;
 }
+
 .description {
   font-size: 14px;
   margin-bottom: 25px;
   color: #666;
 }
-.actions {
-  margin-top: 20px;
+@media (max-width: 768px) {
+
+  .basic-view {
+    padding: 0 15px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
+  }
+
 }
-.btn-primary:hover {
-  background-color: #b89242;
-}
+
 </style>

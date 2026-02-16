@@ -1,6 +1,8 @@
 <template>
   <div class="edit-page">
     <h1>تعديل بيانات المستفيد</h1>
+  </div>
+  <div class="edit-profile">
     <EditProfileModal />
   </div>
 </template>
@@ -10,30 +12,58 @@ import EditProfileModal from '../../components/profile/EditProfileModal.vue'
 </script>
 <style scoped>
 .edit-page {
-  max-width: 100%;
-  margin: auto;
-  padding: 24px;
+  height: 250px;
+  background: linear-gradient(135deg, #0adff3, #facc15);
+  display: flex;
+  align-items: flex-end;
+  padding: 0 100px 50px;
+  color: #fff;
+  direction: rtl;
+}
+
+.edit-page h1{
+  font-size: 26px;
+  font-weight: 400;
+}
+.edit-profile{
+    min-height: 100vh;
   background: linear-gradient(
     135deg,
     #fff7cc 0%,
     /* أصفر فاتح */ #f0fdf4 50%,
     #fef2f2 100% /* أحمر فاتح جداً */
   );
-}
-
-.edit-page h1{
-  position: relative;          /* 🔑 هذا أهم سطر */
-  max-width: 100%;
-  margin: -80px auto 20px;     /* اسحبها فوق بشكل أنعم */
-  padding: 0 80px;
-
-  font-size: 22px;
-  font-weight: 400;
-  color: #ffffff;
-
+  justify-content: center;
   direction: rtl;
   text-align: right;
+}
+/* ================= MOBILE STYLE ================= */
+@media (max-width: 768px) {
 
-  z-index: 1000;
+  .edit-page {
+    height: 200px;
+    margin: -40px 0 0;
+    padding: 0 50px 20px;
+    font-size: 18px;
+    align-items: flex-end;
+  }
+
+  .edit-page h1 {
+    font-size: 20px;
+  }
+
+  .page-container {
+    padding: 20px 15px;
+  }
+
+  .content {
+    gap: 25px;
+  }
+
+  /* خلي كل كرت ياخذ عرض كامل */
+  .content > * {
+    width: 100%;
+  }
+
 }
 </style>
